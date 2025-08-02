@@ -1,0 +1,12 @@
+{
+  "name": "system-book",
+  "version": "1.0.0",
+  "description": "CRUD para libreria",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm",
+    "start": "node index.js"
+  },
+  "author": "Cristian Giraldo",
+  "license": "ISC"
+}
