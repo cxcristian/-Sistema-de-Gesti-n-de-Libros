@@ -8,5 +8,9 @@
     "start": "node index.js"
   },
   "author": "Cristian Giraldo",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.10",
+    "readline": "^1.3.0"
+  }
 }
