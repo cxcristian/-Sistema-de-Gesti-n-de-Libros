@@ -18,7 +18,7 @@ const iniciarMenu = () => {
         console.log("1.Mostrar Libros Actuales")
         console.log("2.Agregar 10 libros más")
         console.log("3.Quitar 5 libros")
-        console.log("Mostrar estadisticas")
+        console.log("4.Mostrar estadisticas")
         console.log("Resetear a 20 libros por defecto")
         console.log("Salir del programa")
         console.log("==================================")
@@ -40,6 +40,7 @@ const iniciarMenu = () => {
                 break;
 
                 case '4':
+                  estadistica()
                     menu()
                 break;
 
@@ -636,6 +637,28 @@ const borrar5libros=()=>{
     }
 }
 
+const estadistica=()=>{
+  if(pila.length === 0){
+    console.log("No existen libros")
+  }else{
+    const totalLibros = pila.length
+    const totalPrecio = pila.reduce((acum, libro) => acum + libro.precio, 0)
+    const precioPromedio = totalPrecio / totalLibros
+    const totalGeneros = [...new Set(pila.map(libro => libro.genero))].length
+
+    const cadaGenero = pila.reduce((acom, libro) => {
+      const genero = libro.genero
+      acom[genero] = (acom[genero]||0) + 1
+      return acom
+
+    })
+    console.log("=====================")
+    console.log("Total de libros:", totalLibros)
+    console.log("Precio total de libros: $", totalPrecio)
+    console.log("Precio promedio de libros: $", precioPromedio.toFixed(2))
+    console.log("Total de géneros:", totalGeneros)
+  }
+}
 
 console.log(pila.length)
 //iniciar menu
