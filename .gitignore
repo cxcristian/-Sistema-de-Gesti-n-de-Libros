@@ -1,0 +1,31 @@
+# Ignora la carpeta donde se instalan las dependencias
+node_modules/
+
+# Ignora los archivos de logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Ignora el archivo de lock si no lo quieres versionar (opcional)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Ignora sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignora entorno de desarrollo
+.env
+.env.local
+.env.*.local
+
+# Visual Studio Code
+.vscode/
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+
