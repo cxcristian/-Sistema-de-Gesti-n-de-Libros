@@ -6,13 +6,13 @@ Este proyecto implementa un **Sistema de Gestión de Libros**
   permite realizar diversas operaciones sobre la colección de libros. */
 
 const readline = require("readline");
-
+//iniciar funcion de menu el cual a su vez inicia la interfaz del menu
 const iniciarMenu = () => {
   const rl = readline.createInterface({
     input: process.stdin, // Entrada estándar (teclado)
     output: process.stdout, // Salida estándar (consola)
   });
-
+  //interfaz del menu
   const menu = () => {
     console.log("<====MENU BIBLIOTECA====>");
     console.log("1.Mostrar Libros Actuales");
@@ -65,8 +65,11 @@ const iniciarMenu = () => {
   };
   menu();
 };
+//Funcion de la barra de carga la cual contiene un mensaje predeterminado por si no se da lo mismo con la duracion,
+
   function barraCarga(mensaje = "Cargando...", ciclos = 3) {
   return new Promise((resolve) => {
+    //array con los simbolos para la barra de carga
     const barra = ['-', '\\', '|', '/'];
     let i = 0;
     let totalIteraciones = ciclos * barra.length;
@@ -84,7 +87,9 @@ const iniciarMenu = () => {
   });
 
 }
+// en pila van todos los libros y se usa var para que sea de un scope glbal
 var pila = [];
+
 
 //Opcion de cargar los 20 miserables libros por defecto
 const cargar20Libros = async() => {
@@ -457,6 +462,7 @@ const cargar20Libros = async() => {
   iniciarMenu()
 };
 //:D esta vaina es la ejecucion de la funcion cargar 20 libros los cuales son pro defecto
+//esto ejecuta todo el codigo
 cargar20Libros();
 
 //opcion para que carguen 10 libros mas(siempre seran los mismos)
@@ -652,7 +658,7 @@ const cargar10libros = async() => {
 
 //Funcion para mostrar los libros
 const cargarLibreria = async() => {
-  await barraCarga("Cargando 10 libros adicionales");
+  await barraCarga("Cargando libreria");
   pila.forEach((libro) => console.log(libro));
   iniciarMenu();
 };
@@ -668,13 +674,16 @@ const borrar5libros = async () => {
     iniciarMenu()
 };
 
-
+//funcion para mostrar las estadisticas
 const estadistica = async() => {
+  //NOTA  todas las funciones tienen un await a la llamada de la barra de carga para que se muestre primero la informacion
   await barraCarga("Cargando estadisticas");
+  //revisar que la pila si tenga libros
   if (pila.length === 0) {
     console.log("No existen libros");
   } else {
     const totalLibros = pila.length;
+    //array method para conocer el total del precio
     const totalPrecio = pila.reduce((acum, libro) => acum + libro.precio, 0);
     const precioPromedio = totalPrecio / totalLibros;
     const totalGeneros = [...new Set(pila.map((libro) => libro.genero))].length;
@@ -693,10 +702,15 @@ const estadistica = async() => {
   }
   iniciarMenu()
 };
+
+//Funcion para reiniciar la pila a los mismos 20 libros de antes
 reiniciarPila = async() => {
   await barraCarga("Reinicio");
+    //pila ya se vacia
   pila = [];
+  //ahora se cargan los 20 libros
   cargar20Libros();
+
   console.log("Pila reiniciada a 20 libros por defecto");
   iniciarMenu();
 };
