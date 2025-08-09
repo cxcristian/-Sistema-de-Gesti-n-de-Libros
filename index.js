@@ -1,3 +1,55 @@
+/**
+ * Crea un objeto libro con validaciones.
+ * Lanza un error si algún campo obligatorio es inválido-erroneo, no discriminacion a los invalidos.
+ * @param {string} titulo
+ * @param {string} autor
+ * @param {string} genero
+ * @param {string} idioma
+ * @param {number} precio
+ * @param {string} formato
+ * @param {string} isbn
+ * @param {string} descripcion
+ * @param {string} estado
+ * @param {string} ubicacion
+ * @param {string} fecha_publicacion
+ * @param {string} editorial
+ * @param {number} paginas
+ * @param {string} dimensiones
+ * @param {string} peso
+ * @returns {Object} Libro validado
+ */
+const crearLibro = (
+  titulo, autor, genero, idioma, precio, formato, isbn, descripcion, estado, ubicacion, fecha_publicacion, editorial, paginas, dimensiones, peso
+) => {
+  // Validaciones estrictas
+  if (!titulo || !autor || !genero || !idioma || !precio || !formato || !isbn || !descripcion || !estado || !ubicacion || !fecha_publicacion || !editorial || !paginas || !dimensiones || !peso) {
+    throw new Error('Todos los campos son obligatorios y deben tener un valor válido.');
+  }
+  if (typeof precio !== 'number' || precio <= 0) {
+    throw new Error('El precio debe ser un número positivo.');
+  }
+  if (typeof paginas !== 'number' || paginas <= 0) {
+    throw new Error('El número de páginas debe ser un número positivo.');
+  }
+  return {
+    titulo,
+    autor,
+    genero,
+    idioma,
+    precio,
+    formato,
+    isbn,
+    descripcion,
+    estado,
+    ubicacion,
+    fecha_publicacion,
+    editorial,
+    paginas,
+    dimensiones,
+    peso,
+    fecha_agregado: new Date().toISOString(),
+  };
+};
 /*## Descripción General
 
 Este proyecto implementa un **Sistema de Gestión de Libros**
@@ -5,14 +57,27 @@ Este proyecto implementa un **Sistema de Gestión de Libros**
   para almacenar y gestionar información bibliográfica. El sistema incluye un menú interactivo en consola que 
   permite realizar diversas operaciones sobre la colección de libros. */
 
+/**
+ * Sistema de Gestión de Libros
+ * -----------------------------------
+ * Este archivo implementa un sistema de gestión de libros en consola usando una pila (stack).
+ * Permite agregar, eliminar, mostrar libros, ver estadísticas y reiniciar la colección.
+ * Todas las operaciones se realizan mediante un menú interactivo en consola.
+ */
+
 const readline = require("readline");
-//iniciar funcion de menu el cual a su vez inicia la interfaz del menu
+/**
+ * Inicia el menú interactivo en consola para gestionar la biblioteca.
+ * Permite seleccionar entre mostrar libros, agregar, borrar, ver estadísticas, reiniciar o salir.
+ */
 const iniciarMenu = () => {
   const rl = readline.createInterface({
     input: process.stdin, // Entrada estándar (teclado)
     output: process.stdout, // Salida estándar (consola)
   });
-  //interfaz del menu
+  /**
+   * Muestra el menú principal y gestiona la selección del usuario.
+   */
   const menu = () => {
     console.log("<====MENU BIBLIOTECA====>");
     console.log("1.Mostrar Libros Actuales");
@@ -26,38 +91,27 @@ const iniciarMenu = () => {
       switch (respuesta.trim()) {
         case "1":
           cargarLibreria();
-          
           break;
-
         case "2":
           cargar10libros();
-          
           break;
-
         case "3":
           borrar5libros();
-          
           break;
-
         case "4":
           estadistica();
-          
           break;
-
         case "5":
           reiniciarPila();
-          
           break;
-
         case "6":
           barraCarga("Saliendo del programa").then(() => {
             console.log("Gracias por usar el sistema de gestión de libros.");
             rl.close(); // Cierra la interfaz de readline
           });
           break;
-
         default:
-          console.log("datos no conocidos");
+          console.log("Opción no reconocida. Por favor, elige una opción válida.");
           menu();
           break;
       }
@@ -65,629 +119,151 @@ const iniciarMenu = () => {
   };
   menu();
 };
-//Funcion de la barra de carga la cual contiene un mensaje predeterminado por si no se da lo mismo con la duracion,
-
-  function barraCarga(mensaje = "Cargando...", ciclos = 3) {
+/**
+ * Muestra una barra de carga animada en consola.
+ * @param {string} mensaje - Mensaje a mostrar junto a la barra de carga.
+ * @param {number} ciclos - Número de ciclos de animación (por defecto 3).
+ * @returns {Promise<void>} Promesa que se resuelve al finalizar la animación.
+ */
+function barraCarga(mensaje = "Cargando...", ciclos = 3) {
   return new Promise((resolve) => {
-    //array con los simbolos para la barra de carga
+    // Array con los símbolos para la barra de carga
     const barra = ['-', '\\', '|', '/'];
     let i = 0;
     let totalIteraciones = ciclos * barra.length;
-
     const intervalo = setInterval(() => {
       process.stdout.write(`\r${barra[i % barra.length]} ${mensaje}`);
       i++;
-
       if (i >= totalIteraciones) {
         clearInterval(intervalo);
         process.stdout.write(`\r${mensaje}... Hecho!\n`);
-        resolve(); // Aquí se resuelve la promesa
+        resolve();
       }
     }, 200); // velocidad de cambio
   });
-
 }
-// en pila van todos los libros y se usa var para que sea de un scope glbal
+/**
+ * Pila principal donde se almacenan todos los libros.
+ * @type {Array<Object>} Cada objeto representa un libro con sus propiedades.
+ */
 var pila = [];
 
 
-//Opcion de cargar los 20 miserables libros por defecto
-const cargar20Libros = async() => {
+/**
+ * Carga 20 libros predeterminados en la pila y muestra el menú.
+ * Utiliza la barra de carga para simular el proceso.
+ * @async
+ * @returns {Promise<void>}
+ */
+const cargar20Libros = async () => {
   await barraCarga("Cargando libros predeterminados");
-  pila.push(
-    {
-      titulo: "El Señor de los Anillos: La Comunidad del Anillo",
-      autor: "J.R.R. Tolkien",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 45000,
-      formato: "tapa dura",
-      isbn: "ISBN-001",
-      descripcion: "Un clásico de la literatura fantástica.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1954-07-29",
-      editorial: "Minotauro",
-      paginas: 576,
-      dimensiones: "23x15 cm",
-      peso: "800g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "1984",
-      autor: "George Orwell",
-      genero: "ficción",
-      idioma: "español",
-      precio: 35000,
-      formato: "tapa blanda",
-      isbn: "ISBN-002",
-      descripcion: "Distopía sobre el control y la vigilancia.",
-      estado: "usado",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1949-06-08",
-      editorial: "Secker & Warburg",
-      paginas: 328,
-      dimensiones: "20x13 cm",
-      peso: "400g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Cien años de soledad",
-      autor: "Gabriel García Márquez",
-      genero: "ficción",
-      idioma: "español",
-      precio: 40000,
-      formato: "tapa dura",
-      isbn: "ISBN-003",
-      descripcion: "La historia de la familia Buendía en Macondo.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1967-05-30",
-      editorial: "Sudamericana",
-      paginas: 417,
-      dimensiones: "21x14 cm",
-      peso: "500g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Don Quijote de la Mancha",
-      autor: "Miguel de Cervantes",
-      genero: "ficción",
-      idioma: "español",
-      precio: 30000,
-      formato: "tapa blanda",
-      isbn: "ISBN-004",
-      descripcion: "La obra cumbre de la literatura española.",
-      estado: "como nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1605-01-16",
-      editorial: "Francisco de Robles",
-      paginas: 863,
-      dimensiones: "24x16 cm",
-      peso: "900g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Los miserables",
-      autor: "Victor Hugo",
-      genero: "ficción",
-      idioma: "español",
-      precio: 42000,
-      formato: "ebook",
-      isbn: "ISBN-005",
-      descripcion: "Novela histórica sobre justicia y redención.",
-      estado: "excelente",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1862-01-01",
-      editorial: "A. Lacroix, Verboeckhoven & Cie.",
-      paginas: 1232,
-      dimensiones: "25x18 cm",
-      peso: "1.2kg",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Harry Potter y la piedra filosofal",
-      autor: "J.K. Rowling",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 38000,
-      formato: "tapa dura",
-      isbn: "ISBN-006",
-      descripcion: "El inicio de la saga de Harry Potter.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1997-06-26",
-      editorial: "Bloomsbury",
-      paginas: 223,
-      dimensiones: "21x14 cm",
-      peso: "350g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El Hobbit",
-      autor: "J.R.R. Tolkien",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 36000,
-      formato: "tapa blanda",
-      isbn: "ISBN-007",
-      descripcion: "Aventura épica en la Tierra Media.",
-      estado: "bueno",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1937-09-21",
-      editorial: "Allen & Unwin",
-      paginas: 310,
-      dimensiones: "20x13 cm",
-      peso: "450g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El nombre del viento",
-      autor: "Patrick Rothfuss",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 50000,
-      formato: "tapa dura",
-      isbn: "ISBN-008",
-      descripcion: "La primera parte de Crónica del asesino de reyes.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2007-03-27",
-      editorial: "DAW Books",
-      paginas: 662,
-      dimensiones: "24x16 cm",
-      peso: "850g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Los juegos del hambre",
-      autor: "Suzanne Collins",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 34000,
-      formato: "ebook",
-      isbn: "ISBN-009",
-      descripcion:
-        "La primera entrega de la trilogía de los juegos del hambre.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2008-09-14",
-      editorial: "Scholastic Press",
-      paginas: 374,
-      dimensiones: "20x13 cm",
-      peso: "500g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Fahrenheit 451",
-      autor: "Ray Bradbury",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 30000,
-      formato: "tapa blanda",
-      isbn: "ISBN-010",
-      descripcion: "Una sociedad distópica donde los libros están prohibidos.",
-      estado: "usado",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1953-10-19",
-      editorial: "Ballantine Books",
-      paginas: 194,
-      dimensiones: "19x12 cm",
-      peso: "320g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El código Da Vinci",
-      autor: "Dan Brown",
-      genero: "misterio",
-      idioma: "español",
-      precio: 37000,
-      formato: "tapa blanda",
-      isbn: "ISBN-011",
-      descripcion: "Thriller de misterio y conspiraciones religiosas.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2003-03-18",
-      editorial: "Doubleday",
-      paginas: 454,
-      dimensiones: "22x14 cm",
-      peso: "600g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "La sombra del viento",
-      autor: "Carlos Ruiz Zafón",
-      genero: "ficción",
-      idioma: "español",
-      precio: 42000,
-      formato: "tapa dura",
-      isbn: "ISBN-012",
-      descripcion:
-        "Primera novela de la saga El Cementerio de los Libros Olvidados.",
-      estado: "excelente",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2001-04-17",
-      editorial: "Planeta",
-      paginas: 565,
-      dimensiones: "23x15 cm",
-      peso: "700g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El alquimista",
-      autor: "Paulo Coelho",
-      genero: "ficción",
-      idioma: "español",
-      precio: 28000,
-      formato: "ebook",
-      isbn: "ISBN-013",
-      descripcion: "Una parábola sobre seguir los sueños.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1988-01-01",
-      editorial: "HarperTorch",
-      paginas: 208,
-      dimensiones: "20x13 cm",
-      peso: "300g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El retrato de Dorian Gray",
-      autor: "Oscar Wilde",
-      genero: "ficción",
-      idioma: "español",
-      precio: 32000,
-      formato: "tapa blanda",
-      isbn: "ISBN-014",
-      descripcion: "Historia sobre la belleza, el arte y la moralidad.",
-      estado: "bueno",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1890-07-01",
-      editorial: "Lippincott's Monthly Magazine",
-      paginas: 254,
-      dimensiones: "21x14 cm",
-      peso: "400g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Dune",
-      autor: "Frank Herbert",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 50000,
-      formato: "tapa dura",
-      isbn: "ISBN-015",
-      descripcion:
-        "La epopeya de ciencia ficción más famosa de todos los tiempos.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1965-08-01",
-      editorial: "Chilton Books",
-      paginas: 688,
-      dimensiones: "24x16 cm",
-      peso: "900g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "Neuromante",
-      autor: "William Gibson",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 38000,
-      formato: "ebook",
-      isbn: "ISBN-016",
-      descripcion: "Obra pionera del subgénero cyberpunk.",
-      estado: "excelente",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1984-07-01",
-      editorial: "Ace Books",
-      paginas: 271,
-      dimensiones: "20x13 cm",
-      peso: "350g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El perfume",
-      autor: "Patrick Süskind",
-      genero: "ficción",
-      idioma: "español",
-      precio: 36000,
-      formato: "tapa blanda",
-      isbn: "ISBN-017",
-      descripcion: "Historia de un asesino con un olfato prodigioso.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1985-01-01",
-      editorial: "Diogenes Verlag",
-      paginas: 255,
-      dimensiones: "20x13 cm",
-      peso: "400g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El club de la lucha",
-      autor: "Chuck Palahniuk",
-      genero: "ficción",
-      idioma: "español",
-      precio: 34000,
-      formato: "tapa dura",
-      isbn: "ISBN-018",
-      descripcion: "Novela que inspiró la famosa película.",
-      estado: "usado",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1996-08-17",
-      editorial: "W. W. Norton",
-      paginas: 218,
-      dimensiones: "21x14 cm",
-      peso: "380g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "American Gods",
-      autor: "Neil Gaiman",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 46000,
-      formato: "tapa dura",
-      isbn: "ISBN-019",
-      descripcion: "Mezcla de mitología y realidad contemporánea.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2001-06-19",
-      editorial: "William Morrow",
-      paginas: 465,
-      dimensiones: "24x16 cm",
-      peso: "750g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    },
-    {
-      titulo: "El libro de arena",
-      autor: "Jorge Luis Borges",
-      genero: "ficción",
-      idioma: "español",
-      precio: 30000,
-      formato: "ebook",
-      isbn: "ISBN-020",
-      descripcion: "Colección de cuentos fantásticos de Borges.",
-      estado: "bueno",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1975-01-01",
-      editorial: "Emecé Editores",
-      paginas: 181,
-      dimensiones: "19x12 cm",
-      peso: "300g",
-      fecha_agregado: "2025-08-05T00:00:00.000Z",
-    }
-  );
-  iniciarMenu()
+  try {
+    pila.push(
+      crearLibro("El Señor de los Anillos: La Comunidad del Anillo", "J.R.R. Tolkien", "fantasía", "español", 45000, "tapa dura", "ISBN-001", "Un clásico de la literatura fantástica.", "nuevo", "Biblioteca Central", "1954-07-29", "Minotauro", 576, "23x15 cm", "800g"),
+      crearLibro("1984", "George Orwell", "ficción", "español", 35000, "tapa blanda", "ISBN-002", "Distopía sobre el control y la vigilancia.", "usado", "Biblioteca Central", "1949-06-08", "Secker & Warburg", 328, "20x13 cm", "400g"),
+      crearLibro("Cien años de soledad", "Gabriel García Márquez", "ficción", "español", 40000, "tapa dura", "ISBN-003", "La historia de la familia Buendía en Macondo.", "nuevo", "Biblioteca Central", "1967-05-30", "Sudamericana", 417, "21x14 cm", "500g"),
+      crearLibro("Don Quijote de la Mancha", "Miguel de Cervantes", "ficción", "español", 30000, "tapa blanda", "ISBN-004", "La obra cumbre de la literatura española.", "como nuevo", "Biblioteca Central", "1605-01-16", "Francisco de Robles", 863, "24x16 cm", "900g"),
+      crearLibro("Los miserables", "Victor Hugo", "ficción", "español", 42000, "ebook", "ISBN-005", "Novela histórica sobre justicia y redención.", "excelente", "Biblioteca Central", "1862-01-01", "A. Lacroix, Verboeckhoven & Cie.", 1232, "25x18 cm", "1.2kg"),
+      crearLibro("Harry Potter y la piedra filosofal", "J.K. Rowling", "fantasía", "español", 38000, "tapa dura", "ISBN-006", "El inicio de la saga de Harry Potter.", "nuevo", "Biblioteca Central", "1997-06-26", "Bloomsbury", 223, "21x14 cm", "350g"),
+      crearLibro("El Hobbit", "J.R.R. Tolkien", "fantasía", "español", 36000, "tapa blanda", "ISBN-007", "Aventura épica en la Tierra Media.", "bueno", "Biblioteca Central", "1937-09-21", "Allen & Unwin", 310, "20x13 cm", "450g"),
+      crearLibro("El nombre del viento", "Patrick Rothfuss", "fantasía", "español", 50000, "tapa dura", "ISBN-008", "La primera parte de Crónica del asesino de reyes.", "nuevo", "Biblioteca Central", "2007-03-27", "DAW Books", 662, "24x16 cm", "850g"),
+      crearLibro("Los juegos del hambre", "Suzanne Collins", "ciencia ficción", "español", 34000, "ebook", "ISBN-009", "La primera entrega de la trilogía de los juegos del hambre.", "nuevo", "Biblioteca Central", "2008-09-14", "Scholastic Press", 374, "20x13 cm", "500g"),
+      crearLibro("Fahrenheit 451", "Ray Bradbury", "ciencia ficción", "español", 30000, "tapa blanda", "ISBN-010", "Una sociedad distópica donde los libros están prohibidos.", "usado", "Biblioteca Central", "1953-10-19", "Ballantine Books", 194, "19x12 cm", "320g"),
+      crearLibro("El código Da Vinci", "Dan Brown", "misterio", "español", 37000, "tapa blanda", "ISBN-011", "Thriller de misterio y conspiraciones religiosas.", "nuevo", "Biblioteca Central", "2003-03-18", "Doubleday", 454, "22x14 cm", "600g"),
+      crearLibro("La sombra del viento", "Carlos Ruiz Zafón", "ficción", "español", 42000, "tapa dura", "ISBN-012", "Primera novela de la saga El Cementerio de los Libros Olvidados.", "excelente", "Biblioteca Central", "2001-04-17", "Planeta", 565, "23x15 cm", "700g"),
+      crearLibro("El alquimista", "Paulo Coelho", "ficción", "español", 28000, "ebook", "ISBN-013", "Una parábola sobre seguir los sueños.", "nuevo", "Biblioteca Central", "1988-01-01", "HarperTorch", 208, "20x13 cm", "300g"),
+      crearLibro("El retrato de Dorian Gray", "Oscar Wilde", "ficción", "español", 32000, "tapa blanda", "ISBN-014", "Historia sobre la belleza, el arte y la moralidad.", "bueno", "Biblioteca Central", "1890-07-01", "Lippincott's Monthly Magazine", 254, "21x14 cm", "400g"),
+      crearLibro("Dune", "Frank Herbert", "ciencia ficción", "español", 50000, "tapa dura", "ISBN-015", "La epopeya de ciencia ficción más famosa de todos los tiempos.", "nuevo", "Biblioteca Central", "1965-08-01", "Chilton Books", 688, "24x16 cm", "900g"),
+      crearLibro("Neuromante", "William Gibson", "ciencia ficción", "español", 38000, "ebook", "ISBN-016", "Obra pionera del subgénero cyberpunk.", "excelente", "Biblioteca Central", "1984-07-01", "Ace Books", 271, "20x13 cm", "350g"),
+      crearLibro("El perfume", "Patrick Süskind", "ficción", "español", 36000, "tapa blanda", "ISBN-017", "Historia de un asesino con un olfato prodigioso.", "nuevo", "Biblioteca Central", "1985-01-01", "Diogenes Verlag", 255, "20x13 cm", "400g"),
+      crearLibro("El club de la lucha", "Chuck Palahniuk", "ficción", "español", 34000, "tapa dura", "ISBN-018", "Novela que inspiró la famosa película.", "usado", "Biblioteca Central", "1996-08-17", "W. W. Norton", 218, "21x14 cm", "380g"),
+      crearLibro("American Gods", "Neil Gaiman", "fantasía", "español", 46000, "tapa dura", "ISBN-019", "Mezcla de mitología y realidad contemporánea.", "nuevo", "Biblioteca Central", "2001-06-19", "William Morrow", 465, "24x16 cm", "750g"),
+      crearLibro("El libro de arena", "Jorge Luis Borges", "ficción", "español", 30000, "ebook", "ISBN-020", "Colección de cuentos fantásticos de Borges.", "bueno", "Biblioteca Central", "1975-01-01", "Emecé Editores", 181, "19x12 cm", "300g")
+    );
+  } catch (error) {
+    console.error('Error al crear libros predeterminados:', error.message);
+  }
+  iniciarMenu();
 };
-//:D esta vaina es la ejecucion de la funcion cargar 20 libros los cuales son pro defecto
-//esto ejecuta todo el codigo
+// Ejecución inicial: carga los 20 libros por defecto y muestra el menú principal
 cargar20Libros();
 
-//opcion para que carguen 10 libros mas(siempre seran los mismos)
-const cargar10libros = async() => {
+/**
+ * Agrega 10 libros adicionales a la pila (siempre los mismos títulos) y muestra el menú.
+ * Utiliza la barra de carga para simular el proceso.
+ * @async
+ * @returns {Promise<void>}
+ */
+const cargar10libros = async () => {
   await barraCarga("Cargando 10 libros adicionales");
-  pila.push(
-    {
-      titulo: "Dune",
-      autor: "Frank Herbert",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 50000,
-      formato: "tapa dura",
-      isbn: "ISBN-021",
-      descripcion:
-        "La epopeya de ciencia ficción más famosa de todos los tiempos.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1965-08-01",
-      editorial: "Chilton Books",
-      paginas: 688,
-      dimensiones: "24x16 cm",
-      peso: "900g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "Neuromante",
-      autor: "William Gibson",
-      genero: "ciencia ficción",
-      idioma: "español",
-      precio: 38000,
-      formato: "ebook",
-      isbn: "ISBN-022",
-      descripcion: "Obra pionera del subgénero cyberpunk.",
-      estado: "excelente",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1984-07-01",
-      editorial: "Ace Books",
-      paginas: 271,
-      dimensiones: "20x13 cm",
-      peso: "350g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "El perfume",
-      autor: "Patrick Süskind",
-      genero: "ficción",
-      idioma: "español",
-      precio: 36000,
-      formato: "tapa blanda",
-      isbn: "ISBN-023",
-      descripcion: "Historia de un asesino con un olfato prodigioso.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1985-01-01",
-      editorial: "Diogenes Verlag",
-      paginas: 255,
-      dimensiones: "20x13 cm",
-      peso: "400g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "El club de la lucha",
-      autor: "Chuck Palahniuk",
-      genero: "ficción",
-      idioma: "español",
-      precio: 34000,
-      formato: "tapa dura",
-      isbn: "ISBN-024",
-      descripcion: "Novela que inspiró la famosa película.",
-      estado: "usado",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1996-08-17",
-      editorial: "W. W. Norton",
-      paginas: 218,
-      dimensiones: "21x14 cm",
-      peso: "380g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "American Gods",
-      autor: "Neil Gaiman",
-      genero: "fantasía",
-      idioma: "español",
-      precio: 46000,
-      formato: "tapa dura",
-      isbn: "ISBN-025",
-      descripcion: "Mezcla de mitología y realidad contemporánea.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "2001-06-19",
-      editorial: "William Morrow",
-      paginas: 465,
-      dimensiones: "24x16 cm",
-      peso: "750g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "El libro de arena",
-      autor: "Jorge Luis Borges",
-      genero: "ficción",
-      idioma: "español",
-      precio: 30000,
-      formato: "ebook",
-      isbn: "ISBN-026",
-      descripcion: "Colección de cuentos fantásticos de Borges.",
-      estado: "bueno",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1975-01-01",
-      editorial: "Emecé Editores",
-      paginas: 181,
-      dimensiones: "19x12 cm",
-      peso: "300g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "Pedro Páramo",
-      autor: "Juan Rulfo",
-      genero: "ficción",
-      idioma: "español",
-      precio: 32000,
-      formato: "tapa blanda",
-      isbn: "ISBN-027",
-      descripcion: "Obra maestra del realismo mágico mexicano.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1955-01-01",
-      editorial: "Fondo de Cultura Económica",
-      paginas: 124,
-      dimensiones: "20x13 cm",
-      peso: "250g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "Rayuela",
-      autor: "Julio Cortázar",
-      genero: "ficción",
-      idioma: "español",
-      precio: 40000,
-      formato: "tapa dura",
-      isbn: "ISBN-028",
-      descripcion:
-        "Novela experimental considerada una de las más influyentes del siglo XX.",
-      estado: "excelente",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1963-06-28",
-      editorial: "Sudamericana",
-      paginas: 600,
-      dimensiones: "23x15 cm",
-      peso: "700g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "La casa de los espíritus",
-      autor: "Isabel Allende",
-      genero: "ficción",
-      idioma: "español",
-      precio: 42000,
-      formato: "tapa dura",
-      isbn: "ISBN-029",
-      descripcion: "Saga familiar que combina historia y realismo mágico.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1982-01-01",
-      editorial: "Plaza & Janés",
-      paginas: 481,
-      dimensiones: "22x14 cm",
-      peso: "650g",
-      fecha_agregado: new Date().toISOString(),
-    },
-    {
-      titulo: "Los detectives salvajes",
-      autor: "Roberto Bolaño",
-      genero: "ficción",
-      idioma: "español",
-      precio: 45000,
-      formato: "tapa blanda",
-      isbn: "ISBN-030",
-      descripcion:
-        "Novela de culto de la literatura latinoamericana contemporánea.",
-      estado: "nuevo",
-      ubicacion: "Biblioteca Central",
-      fecha_publicacion: "1998-01-01",
-      editorial: "Editorial Anagrama",
-      paginas: 609,
-      dimensiones: "23x15 cm",
-      peso: "700g",
-      fecha_agregado: new Date().toISOString(),
-    }
-  );
-  iniciarMenu()
+  try {
+    pila.push(
+      crearLibro("Dune", "Frank Herbert", "ciencia ficción", "español", 50000, "tapa dura", "ISBN-021", "La epopeya de ciencia ficción más famosa de todos los tiempos.", "nuevo", "Biblioteca Central", "1965-08-01", "Chilton Books", 688, "24x16 cm", "900g"),
+      crearLibro("Neuromante", "William Gibson", "ciencia ficción", "español", 38000, "ebook", "ISBN-022", "Obra pionera del subgénero cyberpunk.", "excelente", "Biblioteca Central", "1984-07-01", "Ace Books", 271, "20x13 cm", "350g"),
+      crearLibro("El perfume", "Patrick Süskind", "ficción", "español", 36000, "tapa blanda", "ISBN-023", "Historia de un asesino con un olfato prodigioso.", "nuevo", "Biblioteca Central", "1985-01-01", "Diogenes Verlag", 255, "20x13 cm", "400g"),
+      crearLibro("El club de la lucha", "Chuck Palahniuk", "ficción", "español", 34000, "tapa dura", "ISBN-024", "Novela que inspiró la famosa película.", "usado", "Biblioteca Central", "1996-08-17", "W. W. Norton", 218, "21x14 cm", "380g"),
+      crearLibro("American Gods", "Neil Gaiman", "fantasía", "español", 46000, "tapa dura", "ISBN-025", "Mezcla de mitología y realidad contemporánea.", "nuevo", "Biblioteca Central", "2001-06-19", "William Morrow", 465, "24x16 cm", "750g"),
+      crearLibro("El libro de arena", "Jorge Luis Borges", "ficción", "español", 30000, "ebook", "ISBN-026", "Colección de cuentos fantásticos de Borges.", "bueno", "Biblioteca Central", "1975-01-01", "Emecé Editores", 181, "19x12 cm", "300g"),
+      crearLibro("Pedro Páramo", "Juan Rulfo", "ficción", "español", 32000, "tapa blanda", "ISBN-027", "Obra maestra del realismo mágico mexicano.", "nuevo", "Biblioteca Central", "1955-01-01", "Fondo de Cultura Económica", 124, "20x13 cm", "250g"),
+      crearLibro("Rayuela", "Julio Cortázar", "ficción", "español", 40000, "tapa dura", "ISBN-028", "Novela experimental considerada una de las más influyentes del siglo XX.", "excelente", "Biblioteca Central", "1963-06-28", "Sudamericana", 600, "23x15 cm", "700g"),
+      crearLibro("La casa de los espíritus", "Isabel Allende", "ficción", "español", 42000, "tapa dura", "ISBN-029", "Saga familiar que combina historia y realismo mágico.", "nuevo", "Biblioteca Central", "1982-01-01", "Plaza & Janés", 481, "22x14 cm", "650g"),
+      crearLibro("Los detectives salvajes", "Roberto Bolaño", "ficción", "español", 45000, "tapa blanda", "ISBN-030", "Novela de culto de la literatura latinoamericana contemporánea.", "nuevo", "Biblioteca Central", "1998-01-01", "Editorial Anagrama", 609, "23x15 cm", "700g")
+    );
+  } catch (error) {
+    console.error('Error al crear libros adicionales:', error.message);
+  }
+  iniciarMenu();
 };
 
-//Funcion para mostrar los libros
-const cargarLibreria = async() => {
+/**
+ * Muestra todos los libros actualmente en la pila por consola.
+ * Utiliza la barra de carga antes de mostrar los libros.
+ * @async
+ * @returns {Promise<void>}
+ */
+const cargarLibreria = async () => {
   await barraCarga("Cargando libreria");
   pila.forEach((libro) => console.log(libro));
   iniciarMenu();
 };
 
-//funcion para borrar los utlimo 5 libros
+/**
+ * Elimina los últimos 5 libros agregados a la pila (si existen) y muestra el menú.
+ * Utiliza la barra de carga antes de eliminar.
+ * @async
+ * @returns {Promise<void>}
+ */
 const borrar5libros = async () => {
   await barraCarga("Borrando 5 libros");
-  if (pila.length > 0)
-    for (i = 0; i <= 5; i++) {
-      datoBorrado = pila.pop();
-      console.log("Borrando: ", datoBorrado);
+  if (pila.length > 0) {
+    for (let i = 0; i < 5; i++) {
+      const datoBorrado = pila.pop();
+      if (datoBorrado) {
+        console.log("Borrando: ", datoBorrado);
+      }
     }
-    iniciarMenu()
+  }
+  iniciarMenu();
 };
 
-//funcion para mostrar las estadisticas
-const estadistica = async() => {
-  //NOTA  todas las funciones tienen un await a la llamada de la barra de carga para que se muestre primero la informacion
+/**
+ * Muestra estadísticas de la colección de libros:
+ * - Total de libros
+ * - Precio total y promedio
+ * - Total de géneros y cantidad por género
+ * Utiliza la barra de carga antes de mostrar los datos.
+ * @async
+ * @returns {Promise<void>}
+ */
+const estadistica = async () => {
   await barraCarga("Cargando estadisticas");
-  //revisar que la pila si tenga libros
   if (pila.length === 0) {
     console.log("No existen libros");
   } else {
     const totalLibros = pila.length;
-    //array method para conocer el total del precio
     const totalPrecio = pila.reduce((acum, libro) => acum + libro.precio, 0);
     const precioPromedio = totalPrecio / totalLibros;
     const totalGeneros = [...new Set(pila.map((libro) => libro.genero))].length;
-
     const cadaGenero = pila.reduce((acom, libro) => {
       const genero = libro.genero;
       acom[genero] = (acom[genero] || 0) + 1;
@@ -698,19 +274,22 @@ const estadistica = async() => {
     console.log("Precio total de libros: $", totalPrecio);
     console.log("Precio promedio de libros: $", precioPromedio.toFixed(2));
     console.log("Total de géneros:", totalGeneros);
-    console.log("estadisticas por genero:", cadaGenero);
+    console.log("Estadísticas por género:", cadaGenero);
   }
-  iniciarMenu()
+  iniciarMenu();
 };
 
-//Funcion para reiniciar la pila a los mismos 20 libros de antes
-reiniciarPila = async() => {
+/**
+ * Reinicia la pila de libros a los 20 libros por defecto.
+ * Vacía la pila y vuelve a cargar los libros iniciales.
+ * Utiliza la barra de carga antes de reiniciar.
+ * @async
+ * @returns {Promise<void>}
+ */
+const reiniciarPila = async () => {
   await barraCarga("Reinicio");
-    //pila ya se vacia
   pila = [];
-  //ahora se cargan los 20 libros
-  cargar20Libros();
-
+  await cargar20Libros();
   console.log("Pila reiniciada a 20 libros por defecto");
   iniciarMenu();
 };
