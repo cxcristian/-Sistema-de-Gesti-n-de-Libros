@@ -21,7 +21,7 @@
 const crearLibro = (
   titulo, autor, genero, idioma, precio, formato, isbn, descripcion, estado, ubicacion, fecha_publicacion, editorial, paginas, dimensiones, peso
 ) => {
-  // Validaciones estrictas
+  // Validaciones estroctas
   if (!titulo || !autor || !genero || !idioma || !precio || !formato || !isbn || !descripcion || !estado || !ubicacion || !fecha_publicacion || !editorial || !paginas || !dimensiones || !peso) {
     throw new Error('Todos los campos son obligatorios y deben tener un valor válido.');
   }
@@ -32,21 +32,21 @@ const crearLibro = (
     throw new Error('El número de páginas debe ser un número positivo.');
   }
   return {
-    titulo,
-    autor,
-    genero,
-    idioma,
+    titulo: titulo.trim(),
+    autor: autor.trim(),
+    genero: genero.trim().toLowerCase(),
+    idioma: idioma.trim().toLowerCase(),
     precio,
-    formato,
-    isbn,
-    descripcion,
-    estado,
-    ubicacion,
-    fecha_publicacion,
-    editorial,
+    formato: formato.trim().toLowerCase(),
+    isbn: isbn.trim(),
+    descripcion: descripcion.trim(),
+    estado: estado.trim().toLowerCase(),
+    ubicacion: ubicacion.trim(),
+    fecha_publicacion: fecha_publicacion.trim(),
+    editorial: editorial.trim().toLowerCase(),
     paginas,
-    dimensiones,
-    peso,
+    dimensiones: dimensiones.trim(),
+    peso: peso.trim(),
     fecha_agregado: new Date().toISOString(),
   };
 };
@@ -70,11 +70,12 @@ const readline = require("readline");
  * Inicia el menú interactivo en consola para gestionar la biblioteca.
  * Permite seleccionar entre mostrar libros, agregar, borrar, ver estadísticas, reiniciar o salir.
  */
-const iniciarMenu = () => {
-  const rl = readline.createInterface({
+const rl = readline.createInterface({
     input: process.stdin, // Entrada estándar (teclado)
     output: process.stdout, // Salida estándar (consola)
   });
+const iniciarMenu = () => {
+  
   /**
    * Muestra el menú principal y gestiona la selección del usuario.
    */
@@ -86,6 +87,7 @@ const iniciarMenu = () => {
     console.log("4.Mostrar estadisticas");
     console.log("5.Resetear a 20 libros por defecto");
     console.log("6.Salir del programa");
+    console.log("7.Resumenes de este segmento");
     console.log("==================================");
     rl.question("elige una opcion:", (respuesta) => {
       switch (respuesta.trim()) {
@@ -110,15 +112,66 @@ const iniciarMenu = () => {
             rl.close(); // Cierra la interfaz de readline
           });
           break;
+        case "7":
+          iniciarMenu2();
+
+          break;
         default:
           console.log("Opción no reconocida. Por favor, elige una opción válida.");
           menu();
           break;
       }
     });
-  };
+  }
   menu();
+ 
 };
+
+const iniciarMenu2 = () => {
+  
+  /**
+   * Muestra el menú principal y gestiona la selección del usuario.
+   */
+  const menu2 = () => {
+    console.log("<====LOS RESUMENES====>");
+    console.log("1. Escoger 5 libros que tengan una editorial en especifico");
+   
+    console.log("==================================");
+    rl.question("elige una opcion:", (respuesta) => {
+      switch (respuesta.trim()) {
+        case "1":
+          //funcion misma editorial
+          funMismaEdit()
+          break;
+        case "2":
+          
+          break;
+        case "3":
+    
+          break;
+        case "4":
+          
+          break;
+        case "5":
+          
+          break;
+        case "6":
+      
+          break;
+        case "7":
+         
+          break;
+        default:
+          console.log("Opción no reconocida. Por favor, elige una opción válida.");
+          menu2();
+          break;
+      }
+    });
+  }
+  menu2();
+ 
+};
+
 /**
  * Muestra una barra de carga animada en consola.
  * @param {string} mensaje - Mensaje a mostrar junto a la barra de carga.
@@ -148,7 +201,7 @@ function barraCarga(mensaje = "Cargando...", ciclos = 3) {
  */
 var pila = [];
 
-
+//FUNCIONES PRINCIPALES DEL MENU
 /**
  * Carga 20 libros predeterminados en la pila y muestra el menú.
  * Utiliza la barra de carga para simular el proceso.
@@ -293,6 +346,105 @@ const reiniciarPila = async () => {
   console.log("Pila reiniciada a 20 libros por defecto");
   iniciarMenu();
 };
+//FIN
 
 
+/*=====================SECCION DE MANEJO DE ARRAYS AVANZADOS=========================== */
 
+/*1. Modifica el array de libros en el cual tengas 5 libros por una editorial específica.
+2. Realizar uso del array Method .map y listar los libros por **Titulo**, **Autor, Editorial** y **Precio**
+3. Crear 10 iteraciones diferentes manteniendo el atributo **Titulo* */
+
+//Objetivo: modificar el array para que tenga 5 libros con una editorial especifica
+
+//funcion para cargar los libros de editorial especifica
+const cargarLibrosPorEdit=()=>{
+  pila.push(
+    crearLibro("El Hobbit", "J.R.R. Tolkien", "fantasía", "español", 36000, "tapa blanda", "ISBN-007", "Aventura épica en la Tierra Media.", "bueno", "Biblioteca Central", "1937-09-21", "Minotauro", 310, "20x13 cm", "450g"),
+    crearLibro("El Señor de los Anillos: La Comunidad del Anillo", "J.R.R. Tolkien", "fantasía", "español", 45000, "tapa dura", "ISBN-001", "Un clásico de la literatura fantástica.", "nuevo", "Biblioteca Central", "1954-07-29", "Minotauro", 576, "23x15 cm", "800g"),
+    crearLibro("Harry Potter y la piedra filosofal", "J.K. Rowling", "fantasía", "español", 38000, "tapa dura", "ISBN-006", "El inicio de la saga de Harry Potter.", "nuevo", "Biblioteca Central", "1997-06-26", "Minotauro", 223, "21x14 cm", "350g"),
+    crearLibro("Cien años de soledad", "Gabriel García Márquez", "ficción", "español", 40000, "tapa dura", "ISBN-003", "La historia de la familia Buendía en Macondo.", "nuevo", "Biblioteca Central", "1967-05-30", "Minotauro", 417, "21x14 cm", "500g"),
+    crearLibro("Los juegos del hambre", "Suzanne Collins", "ciencia ficción", "español", 34000, "ebook", "ISBN-009", "La primera entrega de la trilogía de los juegos del hambre.", "nuevo", "Biblioteca Central", "2008-09-14", "Minotauro", 374, "20x13 cm", "500g")
+  );
+}
+cargarLibrosPorEdit();
+//ahora estos libros ya existen, toca filtrarlos desde la pila
+const funMismaEdit = ()=>{
+  const editorialFiltro = "minotauro";
+  const mismaEdit = pila.filter(libro =>
+    libro.editorial === editorialFiltro
+  )
+.map(libro=> ({
+  titulo: libro.titulo,
+  autor: libro.autor,
+  editorial: libro.editorial,
+  precio: libro.precio
+})).slice(0,5);
+mismaEdit.forEach((libro) => console.table(libro));
+//punto 2: uso de .map para listar los libros por Titulo, Autor, Editorial y Precio
+pila.map(libro => ({
+  titulo: libro.titulo,
+  autor: libro.autor,
+  editorial: libro.editorial,
+  precio: libro.precio
+})).forEach(libro => console.table(libro));
+
+
+//punto 3 crear 10 iteraciones diferentes manteniendo el atributo Titulo
+//it1
+pila.map(libro =>({
+  titulo: libro.titulo,
+  autor: libro.autor,
+})).forEach(libro => console.table(libro))
+//it2
+pila.map(libro =>({
+  titulo: libro.titulo,
+  precio: libro.precio,
+  genero: libro.genero
+})).forEach(libro => console.table(libro))
+//it3
+pila.map(libro =>({
+  titulo: libro.titulo,
+  estado: libro.estado
+})).forEach(libro => console.table(libro))
+//it4
+pila.map(libro =>([{
+  titulo: libro.titulo,
+  idioma: libro.idioma,
+
+}])).forEach(libro => console.table(libro))
+//it5
+pila.map(libro =>({
+  titulo: libro.titulo,
+  isbn: libro.isbn,
+})).forEach(libro => console.table(libro))
+//it6
+pila.map(libro =>({
+  titulo: libro.titulo,
+  descripcion: libro.descripcion,
+})).forEach(libro => console.table(libro))
+//it7
+pila.map(libro =>({
+  titulo: libro.titulo,
+  ubicacion: libro.ubicacion
+})).forEach(libro => console.table(libro))
+//it8
+pila.map(libro =>({
+  titulo: libro.titulo,
+  fecha_publicacion: libro.fecha_publicacion
+})).forEach(libro => console.table(libro))
+//it9
+pila.map(libro =>({
+  titulo: libro.titulo,
+  editorial: libro.editorial
+})).forEach(libro => console.table(libro))
+//it10
+pila.map(libro =>({
+  titulo: libro.titulo,
+  paginas: libro.paginas
+})).forEach(libro => console.table(libro))
+iniciarMenu2()
+}
+
+
+/*=====================FIN DE SECCION DE MANEJO DE ARRAYS AVANZADOS=========================== */
