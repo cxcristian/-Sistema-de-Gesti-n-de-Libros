@@ -134,7 +134,8 @@ const iniciarMenu2 = () => {
    */
   const menu2 = () => {
     console.log("<====LOS RESUMENES====>");
-    console.log("1. Escoger 5 libros que tengan una editorial en especifico");
+    console.log("1. resumenes");
+    console.log("2. añadir descuento a los libros")
    
     console.log("==================================");
     rl.question("elige una opcion:", (respuesta) => {
@@ -445,6 +446,17 @@ pila.map(libro =>({
 })).forEach(libro => console.table(libro))
 iniciarMenu2()
 }
+/* */
+
 
 
 /*=====================FIN DE SECCION DE MANEJO DE ARRAYS AVANZADOS=========================== */
+
+/*============Manejo de Array Methods + spreed operator.===================== */
+//al array de objetos creados se les debe agregar un atributo, en este caso descuento 20%
+const añadirDesc =()=>{
+  pila.forEach(libro =>{
+    libro.descuento = 0.20
+  })
+}
+//listar titulo, autor, editorial y precio
