@@ -368,7 +368,7 @@ const cargar20Libros = async () => {
         "Cien años de soledad",
         "Gabriel García Márquez",
         "ficción",
-        "ingles",
+        "inglés",
         40000,
         "tapa dura",
         "ISBN-003",
@@ -674,7 +674,7 @@ const cargar20Libros = async () => {
       crearLibro(
         "Archimagus Dominus Belisarius Cawl",
         "Cristian Giraldo Alvarez",
-        "Mango",
+        "misterio",
         "español",
         80000,
         "tapa dura",
@@ -713,6 +713,7 @@ const cargar20Libros = async () => {
 };
 // Ejecución inicial: carga los 20 libros por defecto y muestra el menú principal
 cargar20Libros();
+console.table(pila)
 
 /**
  * Agrega 10 libros adicionales a la pila (siempre los mismos títulos) y muestra el menú.
@@ -931,6 +932,7 @@ const cargarLibreria = async () => {
       peso: libro.peso,
     }))
   );
+  iniciarMenu()
 };
 
 /**
