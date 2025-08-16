@@ -1,3 +1,20 @@
+/*Nota importante
+1 Modificar el array para tener 5 libros de una editorial específica y mostrar
+1.2 Listar libros por Título, Autor, Editorial y Precio usando .map
+1.3 Crear 10 iteraciones diferentes manteniendo el atributo Título
+2 Agregar atributo descuento (20%) y mostrar libros con descuento
+3 Filtrar libros con precio mayor a 50 dólares
+3.1 Resumir libros por mayor número de páginas
+4 Ordenar libros por número de páginas de mayor a menor
+5 Resumir libros caros (mayor a 11 dólares)
+6 Resumir libros con menos de 100 páginas
+7 Resumir libros con precio mayor a 79,000
+8 Ordenar libros de mayor a menor número de páginas
+9 Funcionalidades de búsqueda (por título, autor, fecha, género, idioma, o 10 iteraciones)
+10 Volver al menú principal
+11 Listar libros por Título, Autor, Editorial y Precio*/
+
+
 //validaciones
 const generosPermitidos = [
   "ficción",
@@ -198,9 +215,12 @@ const iniciarMenu2 = () => {
    */
   const menu2 = () => {
     console.log("<====LOS RESUMENES====>");
-    console.log("1. resumenes");
-    console.log("2. añadir descuento a los libros");
+    console.log("1. 5 con misma edit");
+    console.log("1.2 Realizar uso del array Method .map y listar los libros por Titulo, Autor, Editorial y Precio")
+    console.log("1.3 Crear 10 iteraciones diferentes manteniendo el atributo Titulo");
+    console.log("2. añadir descuento a los libros y mostrar");
     console.log("3 Ver libros con precio mayor a 40.000");
+    console.log("3.1 Realizar un array con el resumen de libros por numero mas alto de paginas mostrando, titulo, autor, editorial, paginas");
     console.log("4 Ordenar libros con mayor cantidad de pagians");
     console.log("5 Ver libros con mayor precio de 45000");
     console.log("6ver libros con menos de 100 paginas");
@@ -216,11 +236,22 @@ const iniciarMenu2 = () => {
           //funcion misma editorial
           funMismaEdit();
           break;
+        case "1.2":
+          //realizar libros por titulo autor editorail y precio
+          formatoEspecifico();
+          break;
+        case "1.3":
+          //crear 10 iteraciones diferentes manteniendo el atributo Titulo
+          fun10it()
         case "2":
           añadirDesc();
           break;
         case "3":
           librosCaros();
+          break;
+        case "3.1":
+          //Realizar un array con el resumen de libros por numero mas alto de paginas mostrando, titulo, autor, editorial, paginas
+          resumenMuchasPaginas()
           break;
         case "4":
           ordenPaginas();
@@ -1119,15 +1150,13 @@ const funMismaEdit = () => {
     }))
     .slice(0, 5);
 
-  //punto 2: uso de .map para listar los libros por Titulo, Autor, Editorial y Precio
-  console.table(pila
-    .map((libro) => ({
-      titulo: libro.titulo,
-      autor: libro.autor,
-      editorial: libro.editorial,
-      precio: libro.precio,
-    }))
-  )
+  console.table(mismaEdit);
+  iniciarMenu2();
+};
+/* */
+//cargar 10 iteraciones diferentes manteniendo el atributo Titulo
+const fun10it = () => {
+ 
 
   //punto 3 crear 10 iteraciones diferentes manteniendo el atributo Titulo
   //it1
@@ -1203,10 +1232,7 @@ const funMismaEdit = () => {
       paginas: libro.paginas,
     }))
     .forEach((libro) => console.table(libro));
-  iniciarMenu2();
-};
-/* */
-
+}
 /*=====================FIN DE SECCION DE MANEJO DE ARRAYS AVANZADOS=========================== */
 
 /*============Manejo de Array Methods + spreed operator.===================== */
@@ -1245,16 +1271,21 @@ const listarLibros = () => {
 //NOTA: pues como es muy caro vamos a usar en este caso que sea mayor a  40.000cop
 
 const librosCaros = () => {
-  let librosCaro = [];
+//Obtener un array de libros caros por titulo mayores de 11 dolares, resumirlos por titulo, autor, precio. 
   console.table(
-    (librosCaro = pila.filter(function (libro) {
-      return libro.precio > 40000;
-    }))
+    (pila
+      .filter((libro) => libro.precio > 45000)
+      .map((libro) => ({
+        Titulo: libro.titulo,
+        Autor: libro.autor,
+        Precio: libro.precio,
+      }))
+    )
   );
+
   console.log("fin de libros caros");
-  console.log(
-    "Realizar un array con el resumen de libros por numero mas alto de paginas mostrando, titulo, autor, editorial, paginas"
-  );
+  iniciarMenu2();
+  
   //asumo que se desea primero conseguir una serie de libros en base a una cantidad de paginas y luego ordenarlos por orden de mayor n de paginas a menor
   //asi que vamos a ello digamos mayor a 500
 
@@ -1268,6 +1299,12 @@ console.table(
 }
 })
 )*/
+
+};
+const resumenMuchasPaginas=()=>{
+  console.log(
+    "Realizar un array con el resumen de libros por numero mas alto de paginas mostrando, titulo, autor, editorial, paginas"
+  );
   console.table(
     pila
       .filter((libro) => libro.paginas > 500)
@@ -1281,8 +1318,7 @@ console.table(
       }))
   );
   iniciarMenu2();
-};
-
+}
 // =============Fin del manejo de filter y sort ===============
 
 //================Inicio Manejo de Array methods sort() """""""""""
@@ -1291,7 +1327,7 @@ console.table(
 //Ordenar los libros por numero de paginas de mayor a menor
 // Ya se hizo arriba si algo p... Dios mio nunca se pidio hacerlo segun un rango jajajajaj bueno sigamos
 
-//ordenar por numero de paginas, pero con titulo, precio y cantidad de paginas para que no quede un cuadro tan grande
+//ordenar por numero de paginas, pero con titulo,
 
 const ordenPaginas = () => {
   console.table(
@@ -1299,8 +1335,10 @@ const ordenPaginas = () => {
       .sort((liba, libb) => libb.paginas - liba.paginas)
       .map((libro) => ({
         Titulo: libro.titulo,
-        Precio: libro.precio,
+        Autor: libro.autor,
+        Editorial: libro.editorial,
         Paginas: libro.paginas,
+       
       }))
   );
   iniciarMenu2();
