@@ -223,7 +223,7 @@ const iniciarMenu2 = () => {
     console.log("3.1 Realizar un array con el resumen de libros por numero mas alto de paginas mostrando, titulo, autor, editorial, paginas");
     console.log("4 Ordenar libros con mayor cantidad de pagians");
     console.log("5 Ver libros con mayor precio de 45000");
-    console.log("6ver libros con menos de 100 paginas");
+    console.log("6 ver libros con menos de 100 paginas");
     console.log("7 ver libros con precio mayor a 79.000");
     console.log("8 Ordenar de mayor a menor numero de paginas");
     console.log("9 Menu Busqueda");
@@ -243,6 +243,7 @@ const iniciarMenu2 = () => {
         case "1.3":
           //crear 10 iteraciones diferentes manteniendo el atributo Titulo
           fun10it()
+          break
         case "2":
           añadirDesc();
           break;
@@ -1145,7 +1146,6 @@ const funMismaEdit = () => {
     .map((libro) => ({
       titulo: libro.titulo,
       autor: libro.autor,
-      editorial: libro.editorial,
       precio: libro.precio,
     }))
     .slice(0, 5);
@@ -1157,7 +1157,6 @@ const funMismaEdit = () => {
 //cargar 10 iteraciones diferentes manteniendo el atributo Titulo
 const fun10it = () => {
  
-
   //punto 3 crear 10 iteraciones diferentes manteniendo el atributo Titulo
   //it1
   pila
@@ -1232,6 +1231,7 @@ const fun10it = () => {
       paginas: libro.paginas,
     }))
     .forEach((libro) => console.table(libro));
+    iniciarMenu2();
 }
 /*=====================FIN DE SECCION DE MANEJO DE ARRAYS AVANZADOS=========================== */
 
