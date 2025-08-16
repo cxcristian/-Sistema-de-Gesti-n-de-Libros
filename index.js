@@ -1,8 +1,44 @@
+//validaciones
+const generosPermitidos = [
+  "ficción",
+  "no ficción",
+  "ciencia ficción",
+  "fantasía",
+  "misterio",
+  "romance",
+  "historia",
+  "biografía",
+  "autoayuda",
+  "técnico",
+];
+const formatosPermitidos = [
+  "tapa dura",
+  "tapa blanda",
+  "ebook",
+  "audiolibro",
+  "digital",
+];
+const estadosPermitidos = [
+  "nuevo",
+  "usado",
+  "como nuevo",
+  "excelente",
+  "bueno",
+];
+const idiomasPermitidos = [
+  "español",
+  "inglés",
+  "francés",
+  "alemán",
+  "italiano",
+  "portugués",
+];
 /**
  * Crea un objeto libro con validaciones.
  * Lanza un error si algún campo obligatorio es inválido-erroneo, no es discriminacion a los invalidos.
  * @param {string} titulo @param {string} autor @param {string} genero @param {string} idioma @param {number} precio @param {string} formato @param {string} isbn @param {string} descripcion @param {string} estado @param {string} ubicacion @param {string} fecha_publicacion @param {string} editorial @param {number} paginas @param {string} dimensiones @param {string} peso @returns {Object} Libro validado
  */
+
 const crearLibro = (
   titulo,
   autor,
@@ -20,7 +56,7 @@ const crearLibro = (
   dimensiones,
   peso
 ) => {
-  // Validaciones estroctas
+  // Validaciones estrictas
   if (
     !titulo ||
     !autor ||
@@ -47,6 +83,18 @@ const crearLibro = (
   }
   if (typeof paginas !== "number" || paginas <= 0) {
     throw new Error("El número de páginas debe ser un número positivo.");
+  }
+  if (!generosPermitidos.includes(genero.trim().toLowerCase())) {
+    throw new Error(`Género no permitido: ${genero}`);
+  }
+  if (!formatosPermitidos.includes(formato.trim().toLowerCase())) {
+    throw new Error(`Formato no permitido: ${formato}`);
+  }
+  if (!estadosPermitidos.includes(estado.trim().toLowerCase())) {
+    throw new Error(`Estado no permitido: ${estado}`);
+  }
+  if (!idiomasPermitidos.includes(idioma.trim().toLowerCase())) {
+    throw new Error(`Idioma no permitido: ${idioma}`);
   }
   return {
     titulo: titulo.trim(),
