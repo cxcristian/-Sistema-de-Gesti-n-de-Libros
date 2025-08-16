@@ -208,6 +208,7 @@ const iniciarMenu2 = () => {
     console.log("8 Ordenar de mayor a menor numero de paginas");
     console.log("9 Menu Busqueda");
     console.log("10 volver al menu principal");
+    console.log("11 ver por titulo autor editorial y precio")
     console.log("==================================");
     rl.question("elige una opcion:", (respuesta) => {
       switch (respuesta.trim()) {
@@ -278,6 +279,9 @@ const iniciarMenu2 = () => {
         case "10":
           iniciarMenu();
           break;
+        case "11":
+          formatoEspecifico()
+          break
         default:
           console.log(
             "Opción no reconocida. Por favor, elige una opción válida."
@@ -1114,16 +1118,16 @@ const funMismaEdit = () => {
       precio: libro.precio,
     }))
     .slice(0, 5);
-  mismaEdit.forEach((libro) => console.table(libro));
+
   //punto 2: uso de .map para listar los libros por Titulo, Autor, Editorial y Precio
-  pila
+  console.table(pila
     .map((libro) => ({
       titulo: libro.titulo,
       autor: libro.autor,
       editorial: libro.editorial,
       precio: libro.precio,
     }))
-    .forEach((libro) => console.table(libro));
+  )
 
   //punto 3 crear 10 iteraciones diferentes manteniendo el atributo Titulo
   //it1
@@ -1532,3 +1536,17 @@ const hacer10Iteraciones = () => {
   buscarPorIdioma("ingles");
   console.log("===================================");
 };
+
+const formatoEspecifico=() => {
+  console.table(
+    pila.map((libro)=>({
+      Titulo: libro.titulo,
+      Autor: libro.autor,
+      Editorial: libro.editorial,
+      Precio: libro.precio
+
+    }))
+   
+  )
+   iniciarMenu2()
+}
